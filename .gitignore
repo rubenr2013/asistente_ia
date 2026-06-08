@@ -23,7 +23,7 @@ db.sqlite3
 .DS_Store
 Thumbs.db
 
-# Credenciales de Google (NUNCA subir)
+# Credenciales de Google (NUNCA subi
 credentials.json
 token.json
 
