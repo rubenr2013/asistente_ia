@@ -1,0 +1,23 @@
+{
+  "name": "ARIA — Asistente de Respuesta Inteligente",
+  "short_name": "ARIA",
+  "description": "Tu asistente y secretario personal con inteligencia artificial conectado a Google",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0f14",
+  "theme_color": "#e8a838",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/static/images/logo-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/static/images/logo-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

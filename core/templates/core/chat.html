@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+
+{% block title %}ARIA — Asistente Personal Inteligente{% endblock %}
+
+{% block content %}
+<!-- Contenedor del Chat -->
+<div class="flex-1 flex flex-col min-h-[calc(100vh-120px)] md:h-screen">
+    
+    <!-- Header del Chat -->
+    <header class="flex items-center justify-between px-6 py-4 border-b border-aria-border bg-aria-panel/50 backdrop-blur-md">
+        <div class="flex items-center space-x-3">
+            <div class="w-2.5 h-2.5 rounded-full bg-aria-accent animate-pulse"></div>
+            <div>
+                <h1 class="text-sm font-semibold tracking-wider text-aria-accent uppercase">ARIA v0.1</h1>
+                <p class="text-[11px] text-aria-textMuted font-mono">Agente Activo &bull; Listo para actuar</p>
+            </div>
+        </div>
+        
+        <!-- Estado de Cuentas Conectadas -->
+        <div class="text-right">
+            <span class="text-xs text-aria-accent font-medium bg-aria-accent/10 border border-aria-accent/20 px-2.5 py-1 rounded-full">
+                5 Cuentas Gmail
+            </span>
+        </div>
+    </header>
+
+    <!-- Área de Conversación (Scroll) -->
+    <div id="chat-messages" class="flex-1 overflow-y-auto p-6 space-y-4 max-h-[calc(100vh-220px)] md:max-h-[calc(100vh-180px)]">
+        
+        <!-- Mensaje Inicial de ARIA si no hay historial -->
+        {% if not historial_chat %}
+            <div class="msg-container">
+                <div class="w-8 h-8 rounded-lg bg-aria-accent flex items-center justify-center text-aria-bg font-bold text-sm mr-3 flex-shrink-0 mt-0.5">
+                    A
+                </div>
+                <div class="msg-bubble msg-aria">
+                    <p class="text-[11px] text-aria-accent font-mono uppercase tracking-wider mb-1">ARIA &bull; Sistema Iniciado</p>
+                    <p class="mb-2">¡Hola! Soy **ARIA**, tu asistente y secretario personal inteligente.</p>
+                    <p class="mb-3">Estoy listo para ayudarte a gestionar tus **correos electrónicos**, organizar tus **notas y gastos**, y coordinar tu **calendario**.</p>
+                    <p class="text-xs text-aria-textMuted font-medium mb-1">Prueba pidiéndome cosas como:</p>
+                    <ul class="text-xs space-y-1 text-aria-accent font-mono">
+                        <li>&rarr; "Muéstrame mis correos no leídos"</li>
+                        <li>&rarr; "Crea una nota de gastos de oficina"</li>
+                        <li>&rarr; "Agrega $45 de papelería a la nota de gastos de oficina"</li>
+                        <li>&rarr; "¿Qué actividades has realizado por mí hoy?"</li>
+                    </ul>
+                </div>
+            </div>
+        {% else %}
+            <!-- Cargar Historial Existente -->
+            {% for mensaje in historial_chat %}
+                {% if mensaje.rol == 'aria' %}
+                    <div class="msg-container">
+                        <div class="w-8 h-8 rounded-lg bg-aria-accent flex items-center justify-center text-aria-bg font-bold text-sm mr-3 flex-shrink-0 mt-0.5">
+                            A
+                        </div>
+                        <div class="msg-bubble msg-aria">
+                            <p class="text-[11px] text-aria-accent font-mono uppercase tracking-wider mb-1">ARIA</p>
+                            <p class="whitespace-pre-line">{{ mensaje.mensaje }}</p>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="msg-container">
+                        <div class="msg-bubble msg-user">
+                            <p class="text-[11px] text-aria-accent font-mono uppercase tracking-wider mb-1">Tú</p>
+                            <p class="whitespace-pre-line">{{ mensaje.mensaje }}</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-lg bg-aria-border flex items-center justify-center text-aria-textMuted font-bold text-sm ml-3 flex-shrink-0 mt-0.5">
+                            U
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Barra Inferior de Entrada de Mensaje -->
+    <div class="p-6 border-t border-aria-border bg-aria-panel/30 backdrop-blur-md space-y-3">
+        <!-- Acceso Rápido y Sugerencias -->
+        <div class="flex flex-wrap gap-2 text-xs items-center">
+            <span class="text-aria-textMuted uppercase font-mono text-[10px] tracking-wider">Accesos Rápidos:</span>
+            <button onclick="enviarSugerencia('Muéstrame mis correos no leídos')" class="px-2.5 py-1 rounded-md border border-aria-border hover:border-aria-accent hover:text-aria-accent transition-all text-aria-textMuted font-mono">
+                📧 Ver Correos
+            </button>
+            <button onclick="enviarSugerencia('crea una nota de gastos de semana')" class="px-2.5 py-1 rounded-md border border-aria-border hover:border-aria-accent hover:text-aria-accent transition-all text-aria-textMuted font-mono">
+                📝 Nueva Nota
+            </button>
+            <button onclick="enviarSugerencia('¿Qué has hecho hoy?')" class="px-2.5 py-1 rounded-md border border-aria-border hover:border-aria-accent hover:text-aria-accent transition-all text-aria-textMuted font-mono">
+                📊 Ver Reporte Actividad
+            </button>
+        </div>
+
+        <!-- Caja de Texto del Input -->
+        <div class="flex items-end space-x-3 bg-aria-panel/80 border border-aria-border rounded-xl p-2.5 focus-within:border-aria-accent transition-all">
+            <textarea id="chat-input" rows="1" placeholder="Escribe un mensaje o pídele una acción a ARIA..." 
+                      class="flex-1 bg-transparent border-0 focus:ring-0 resize-none text-sm text-aria-text placeholder-aria-textMuted focus:outline-none px-2 py-1 max-h-32"
+                      onkeydown="handleKey(event)"></textarea>
+            <button onclick="sendMessage()" class="btn-gold p-2.5 rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4 transform rotate-90" fill="currentColor" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"></path></svg>
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<!-- Token de seguridad CSRF de Django -->
+{% csrf_token %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Hacer scroll al final al cargar el chat
+    const chatContainer = document.getElementById('chat-messages');
+    function scrollToBottom() {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+    window.addEventListener('load', scrollToBottom);
+
+    // Obtener token CSRF de Django
+    function getCsrfToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]').value;
+    }
+
+    // Auto-ajustar altura del textarea
+    const chatInput = document.getElementById('chat-input');
+    chatInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+    });
+
+    // Enviar sugerencia de botón rápido
+    function enviarSugerencia(texto) {
+        chatInput.value = texto;
+        sendMessage();
+    }
+
+    // Detectar tecla Enter
+    function handleKey(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    }
+
+    // Agregar mensaje a la pantalla
+    function appendMessage(sender, text) {
+        const msgContainer = document.createElement('div');
+        msgContainer.className = 'msg-container';
+        
+        if (sender === 'aria') {
+            msgContainer.innerHTML = `
+                <div class="w-8 h-8 rounded-lg bg-aria-accent flex items-center justify-center text-aria-bg font-bold text-sm mr-3 flex-shrink-0 mt-0.5">
+                    A
+                </div>
+                <div class="msg-bubble msg-aria">
+                    <p class="text-[11px] text-aria-accent font-mono uppercase tracking-wider mb-1">ARIA</p>
+                    <p class="whitespace-pre-line">${text}</p>
+                </div>
+            `;
+        } else {
+            msgContainer.innerHTML = `
+                <div class="msg-bubble msg-user">
+                    <p class="text-[11px] text-aria-accent font-mono uppercase tracking-wider mb-1">Tú</p>
+                    <p class="whitespace-pre-line">${text}</p>
+                </div>
+                <div class="w-8 h-8 rounded-lg bg-aria-border flex items-center justify-center text-aria-textMuted font-bold text-sm ml-3 flex-shrink-0 mt-0.5">
+                    U
+                </div>
+            `;
+        }
+        
+        chatContainer.appendChild(msgContainer);
+        scrollToBottom();
+    }
+
+    // Mostrar indicador de carga/escritura
+    function showTypingIndicator() {
+        const indicator = document.createElement('div');
+        indicator.id = 'typing-indicator';
+        indicator.className = 'msg-container';
+        indicator.innerHTML = `
+            <div class="w-8 h-8 rounded-lg bg-aria-accent flex items-center justify-center text-aria-bg font-bold text-sm mr-3 flex-shrink-0 mt-0.5">
+                A
+            </div>
+            <div class="msg-bubble msg-aria flex items-center space-x-1.5 py-3">
+                <span class="text-xs text-aria-accent font-mono mr-1">Procesando</span>
+                <div class="typing-dots flex items-center">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        `;
+        chatContainer.appendChild(indicator);
+        scrollToBottom();
+    }
+
+    // Ocultar indicador de carga
+    function removeTypingIndicator() {
+        const indicator = document.getElementById('typing-indicator');
+        if (indicator) indicator.remove();
+    }
+
+    // Enviar mensaje real a Django
+    async function sendMessage() {
+        const text = chatInput.value.trim();
+        if (!text) return;
+
+        // Limpiar el campo
+        chatInput.value = '';
+        chatInput.style.height = 'auto';
+
+        // Agregar mensaje de usuario en UI
+        appendMessage('user', text);
+
+        // Mostrar que ARIA está escribiendo/procesando
+        showTypingIndicator();
+
+        try {
+            const response = await fetch('{% url "aria_responder" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken()
+                },
+                body: JSON.stringify({ mensaje: text })
+            });
+
+            const data = await response.json();
+            removeTypingIndicator();
+
+            if (response.ok) {
+                appendMessage('aria', data.respuesta);
+            } else {
+                appendMessage('aria', 'Vaya, he tenido un inconveniente de red. ¿Podrías repetirlo por favor?');
+            }
+        } catch (error) {
+            removeTypingIndicator();
+            appendMessage('aria', 'Error de conexión. Asegúrate de tener conexión a internet o que el servidor local de Django esté encendido.');
+            console.error('Error:', error);
+        }
+    }
+</script>
+{% endblock %}

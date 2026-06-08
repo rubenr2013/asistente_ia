@@ -22,3 +22,16 @@ db.sqlite3
 # Sistema operativo
 .DS_Store
 Thumbs.db
+
+# Credenciales de Google (NUNCA subir)
+credentials.json
+token.json
+
+# Archivos estáticos recolectados
+staticfiles/
+
+# Claude / Gemini
+.claude/
+.gemini/
+
+credentials.json

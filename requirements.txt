@@ -1,0 +1,29 @@
+# =============================================
+# ARIA — Asistente de Respuesta Inteligente
+# Dependencias del proyecto
+# Instalar con: pip install -r requirements.txt
+# =============================================
+
+# Framework web
+django==5.2.15
+
+# Base de datos PostgreSQL
+psycopg2-binary
+
+# IA — Conexión con Groq (LLaMA 3.3)
+groq
+
+# Variables de entorno (.env)
+python-dotenv
+
+# Google APIs (Gmail, Calendar)
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+google-api-python-client
+
+# Servidor de producción
+gunicorn
+
+# Servir archivos estáticos en producción
+whitenoise

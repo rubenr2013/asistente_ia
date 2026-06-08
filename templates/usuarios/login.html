@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Iniciar Sesión — ARIA{% endblock %}
+
+{% block content %}
+<div class="flex-1 flex items-center justify-center p-6 min-h-[calc(100vh-60px)] md:min-h-screen">
+    <div class="w-full max-w-md bg-aria-panel border border-aria-border rounded-xl p-8 shadow-2xl space-y-6">
+        
+        <!-- Branding Logo / Header -->
+        <div class="text-center space-y-2">
+            <div class="w-12 h-12 rounded-xl bg-aria-accent flex items-center justify-center text-aria-bg font-bold text-2xl mx-auto shadow-lg shadow-aria-accent/15">
+                A
+            </div>
+            <h1 class="text-2xl font-bold text-aria-accent tracking-wider">ARIA</h1>
+            <p class="text-sm text-aria-textMuted">Inicia sesión para interactuar con tu asistente personal</p>
+        </div>
+
+        <!-- Formulario -->
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+                <div class="p-3 bg-red-500/10 border border-red-500/30 text-red-400 text-xs rounded-lg text-center font-medium">
+                    Usuario o contraseña incorrectos. Por favor intente de nuevo.
+                </div>
+            {% endif %}
+
+            <!-- Campo de Usuario -->
+            <div class="space-y-1">
+                <label for="login-username" class="text-xs font-semibold text-aria-textMuted uppercase tracking-wider">Usuario</label>
+                {{ form.username }}
+            </div>
+
+            <!-- Campo de Contraseña -->
+            <div class="space-y-1">
+                <label for="login-password" class="text-xs font-semibold text-aria-textMuted uppercase tracking-wider">Contraseña</label>
+                <div class="relative flex items-center">
+                    {{ form.password }}
+                    <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 text-aria-textMuted hover:text-aria-accent focus:outline-none">
+                        <svg id="eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <!-- Icono ojo abierto -->
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Botón de Ingreso -->
+            <button type="submit" class="btn-gold w-full mt-2 py-3 text-sm tracking-wider uppercase font-bold flex items-center justify-center space-x-2">
+                <span>Ingresar al Sistema</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            </button>
+        </form>
+
+        <!-- Notas Informativas -->
+        <div class="text-center pt-2">
+            <p class="text-[11px] text-aria-textMuted">ARIA v0.1 — Acceso exclusivo y seguro</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function togglePasswordVisibility() {
+        const passwordInput = document.getElementById('login-password');
+        const eyeIcon = document.getElementById('eye-icon');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            // Cambiar a icono ojo cerrado
+            eyeIcon.innerHTML = `
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+            `;
+        } else {
+            passwordInput.type = 'password';
+            // Cambiar a icono ojo abierto
+            eyeIcon.innerHTML = `
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+            `;
+        }
+    }
+</script>
+{% endblock %}

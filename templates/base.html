@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ARIA — Asistente Inteligente{% endblock %}</title>
+
+    <!-- Tailwind CSS (v3 CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        aria: {
+                            bg: '#0f0f14',
+                            panel: '#1a1a24',
+                            accent: '#e8a838',
+                            accentHover: '#d4943a',
+                            border: '#2a2a3a',
+                            text: '#e8e8ed',
+                            textMuted: '#7a7a8a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts: Inter para texto, JetBrains Mono para datos -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Estilos Personalizados de ARIA -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+    <!-- Manifiesto PWA para Celular -->
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <meta name="theme-color" content="#e8a838">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ARIA">
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-aria-bg text-aria-text min-h-screen flex flex-col md:flex-row">
+
+    <!-- ==========================================
+         BARRA LATERAL / SIDEBAR (Escritorio)
+         ========================================== -->
+    {% if user.is_authenticated %}
+    <aside class="hidden md:flex flex-col w-64 bg-aria-panel border-r border-aria-border min-h-screen p-4 justify-between">
+        <div class="space-y-6">
+            <!-- Branding / Logo -->
+            <div class="flex items-center space-x-3 px-2 py-3">
+                <div class="w-8 h-8 rounded-lg bg-aria-accent flex items-center justify-center text-aria-bg font-bold text-lg shadow-lg">
+                    A
+                </div>
+                <div>
+                    <h2 class="font-bold text-lg tracking-wider text-aria-accent">ARIA</h2>
+                    <p class="text-[10px] text-aria-textMuted uppercase font-semibold">Secretario Personal</p>
+                </div>
+            </div>
+
+            <!-- Menú de Navegación -->
+            <nav class="space-y-1">
+                <a href="{% url 'chat' %}" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all {% if request.resolver_match.url_name == 'chat' %}bg-aria-accent/10 text-aria-accent border-l-2 border-aria-accent{% else %}text-aria-textMuted hover:text-aria-text hover:bg-white/5{% endif %}">
+                    <!-- Icono Chat -->
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                    <span>Asistente (Chat)</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-aria-textMuted hover:text-aria-text hover:bg-white/5 transition-all">
+                    <!-- Icono Correo -->
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    <span>Correos (Gmail)</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-aria-textMuted hover:text-aria-text hover:bg-white/5 transition-all">
+                    <!-- Icono Notas -->
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <span>Notas y Tareas</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-aria-textMuted hover:text-aria-text hover:bg-white/5 transition-all">
+                    <!-- Icono Calendario -->
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    <span>Calendario</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-aria-textMuted hover:text-aria-text hover:bg-white/5 transition-all">
+                    <!-- Icono Informes -->
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <span>Informes de Actividad</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Perfil / Config / Logout -->
+        <div class="border-t border-aria-border pt-4 space-y-2">
+            <div class="px-2 py-1.5">
+                <p class="text-xs text-aria-textMuted">Usuario conectado</p>
+                <p class="text-sm font-semibold text-aria-accent">{{ user.username }}</p>
+            </div>
+            <a href="{% url 'logout' %}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-all">
+                <!-- Icono Salir (flecha apuntando a la derecha/fuera) -->
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                <span>Cerrar Sesión</span>
+            </a>
+        </div>
+    </aside>
+    {% endif %}
+
+    <!-- ==========================================
+         CABECERA / NAVBAR MÓVIL
+         ========================================== -->
+    {% if user.is_authenticated %}
+    <header class="flex md:hidden items-center justify-between bg-aria-panel border-b border-aria-border px-4 py-3 sticky top-0 z-50">
+        <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 rounded-lg bg-aria-accent flex items-center justify-center text-aria-bg font-bold text-base shadow-md">
+                A
+            </div>
+            <span class="font-bold tracking-wider text-aria-accent text-base">ARIA</span>
+        </div>
+        <div class="flex items-center space-x-3">
+            <span class="text-xs text-aria-accent font-medium">{{ user.username }}</span>
+            <a href="{% url 'logout' %}" class="text-red-400">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+            </a>
+        </div>
+    </header>
+    {% endif %}
+
+    <!-- ==========================================
+         CONTENIDO PRINCIPAL
+         ========================================== -->
+    <main class="flex-1 flex flex-col min-w-0">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- ==========================================
+         NAVEGACIÓN INFERIOR MÓVIL
+         ========================================== -->
+    {% if user.is_authenticated %}
+    <nav class="flex md:hidden justify-around items-center bg-aria-panel border-t border-aria-border py-2 px-4 sticky bottom-0 z-50">
+        <a href="{% url 'chat' %}" class="flex flex-col items-center space-y-0.5 {% if request.resolver_match.url_name == 'chat' %}text-aria-accent{% else %}text-aria-textMuted{% endif %}">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+            <span class="text-[9px]">Chat</span>
+        </a>
+        <a href="#" class="flex flex-col items-center space-y-0.5 text-aria-textMuted">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            <span class="text-[9px]">Correos</span>
+        </a>
+        <a href="#" class="flex flex-col items-center space-y-0.5 text-aria-textMuted">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            <span class="text-[9px]">Notas</span>
+        </a>
+        <a href="#" class="flex flex-col items-center space-y-0.5 text-aria-textMuted">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            <span class="text-[9px]">Calendar</span>
+        </a>
+        <a href="#" class="flex flex-col items-center space-y-0.5 text-aria-textMuted">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            <span class="text-[9px]">Reportes</span>
+        </a>
+    </nav>
+    {% endif %}
+
+    <!-- Registrar Service Worker para PWA -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('{% static "sw.js" %}')
+                    .then(reg => console.log('Service Worker registrado.', reg))
+                    .catch(err => console.log('Error al registrar Service Worker.', err));
+            });
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
